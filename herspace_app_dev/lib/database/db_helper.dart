@@ -3,13 +3,15 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
+
   static Database? _database;
 
   DatabaseHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('emora.db');
+
+    _database = await _initDB('herspace.db');
     return _database!;
   }
 
@@ -22,25 +24,36 @@ class DatabaseHelper {
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nickname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL,
-        role TEXT NOT NULL)''');
+CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE, password TEXT, role TEXT
+)
+''');
   }
 
-  Future<int> createUser(Map<String, dynamic> row) async {
+  // INSERT USER (SIGNUP)
+  Future<int> insertUser(Map<String, dynamic> user) async {
     final db = await instance.database;
-    return await db.insert('users', row);
+
+    return await db.insert(
+      'users',
+      user,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
+  // LOGIN USER
   Future<List<Map<String, dynamic>>> loginUser(
     String email,
     String password,
   ) async {
     final db = await instance.database;
-    return await db.query(
+
+    final result = await db.query(
       'users',
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
     );
+
+    return result;
   }
 }

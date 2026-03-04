@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app_dev/screen/splash_screen.dart';
-import 'decoration/cost_color.dart';
-import 'screen/onboarding_screen.dart';
 
 void main() {
   runApp(const HerSpaceApp());
@@ -14,8 +12,7 @@ class HerSpaceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HerSpace',
-      theme: ThemeData(
+
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
@@ -31,8 +28,6 @@ class HerSpaceApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
       home: SplashScreen(),
     );
   }

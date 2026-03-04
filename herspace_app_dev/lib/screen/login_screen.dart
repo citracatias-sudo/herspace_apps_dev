@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app_dev/screen/signup_screen.dart';
-import 'package:herspace_app_dev/view/homepage.dart';
 import '../database/db_helper.dart';
 import '../decoration/cost_color.dart';
 
@@ -237,7 +236,7 @@ class _LoginScreenHerSpaceState extends State<LoginScreenHerSpace> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => homePageHerspace(),
+                            builder: (context) => SignUpScreenHerSpace(),
                           ),
                           (Route) => false,
                         );

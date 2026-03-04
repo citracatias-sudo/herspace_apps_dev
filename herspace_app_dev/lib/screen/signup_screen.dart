@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app_dev/screen/login_screen.dart';
+import 'package:herspace_app_dev/view/homepage.dart';
 import '../database/db_helper.dart';
 import '../decoration/cost_color.dart';
 
 class SignUpScreenHerSpace extends StatefulWidget {
-  const SignUpScreenHerSpace({super.key});
+  SignUpScreenHerSpace({super.key});
 
-  // route name for navigation, destination to be filled elsewhere
   static const String routeName = '/signup';
 
   @override
@@ -15,6 +15,7 @@ class SignUpScreenHerSpace extends StatefulWidget {
 
 class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
   final _formKey = GlobalKey<FormState>();
+
   final nicknameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -34,20 +35,33 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final row = {
-      'nickname': nicknameController.text.trim(),
-      'email': emailController.text.trim(),
-      'password': passwordController.text.trim(),
-      'role': selectedRole,
-    };
-    await DatabaseHelper.instance.createUser(row);
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final nickname = nicknameController.text.trim();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Account created')));
+    final result = await DatabaseHelper.instance.insertUser({
+      "nickname": nickname,
+      "email": email,
+      "password": password,
+      "role": selectedRole,
+    });
 
-    // navigate to login or next screen
-    Navigator.of(context).pushReplacementNamed(LoginScreenHerSpace.routeName);
+    if (!mounted) return;
+
+    if (result > 0) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Account created successfully')));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => homePageHerspace()),
+      );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Email already registered')));
+    }
   }
 
   @override
@@ -63,6 +77,7 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 60),
+
                 Text(
                   'Create account',
                   style: TextStyle(
@@ -71,14 +86,17 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                     color: AppColor.textDark,
                   ),
                 ),
+
                 SizedBox(height: 10),
+
                 Text(
                   'Sign up to get started',
                   style: TextStyle(fontSize: 14, color: AppColor.textLight),
                 ),
+
                 SizedBox(height: 40),
 
-                // NICKNAME
+                /// NICKNAME
                 TextFormField(
                   controller: nicknameController,
                   decoration: InputDecoration(
@@ -90,12 +108,22 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Nickname is required";
+                    }
+
+                    if (value.length < 3) {
+                      return "Nickname must be at least 3 characters";
+                    }
+
+                    return null;
+                  },
                 ),
+
                 SizedBox(height: 20),
 
-                // EMAIL
+                /// EMAIL
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -108,15 +136,26 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Required';
-                    if (!v.contains('@')) return 'Invalid email';
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Email is required";
+                    }
+
+                    final emailRegex = RegExp(
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$',
+                    );
+
+                    if (!emailRegex.hasMatch(value.trim())) {
+                      return "Enter a valid email address";
+                    }
+
                     return null;
                   },
                 ),
+
                 SizedBox(height: 20),
 
-                // PASSWORD
+                /// PASSWORD
                 TextFormField(
                   controller: passwordController,
                   obscureText: true,
@@ -129,15 +168,30 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Required';
-                    if (v.length < 6) return 'Min 6 characters';
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Password is required";
+                    }
+
+                    if (value.length < 8) {
+                      return "Password must be at least 8 characters";
+                    }
+
+                    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                      return "Include at least one uppercase letter";
+                    }
+
+                    if (!RegExp(r'[0-9]').hasMatch(value)) {
+                      return "Include at least one number";
+                    }
+
                     return null;
                   },
                 ),
+
                 SizedBox(height: 20),
 
-                // CONFIRM PASSWORD
+                /// CONFIRM PASSWORD
                 TextFormField(
                   controller: confirmController,
                   obscureText: true,
@@ -150,16 +204,22 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Required';
-                    if (v != passwordController.text)
-                      return 'Passwords do not match';
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Confirm your password";
+                    }
+
+                    if (value != passwordController.text) {
+                      return "Passwords do not match";
+                    }
+
                     return null;
                   },
                 ),
+
                 SizedBox(height: 20),
 
-                // ROLE SELECTION
+                /// ROLE SELECTOR
                 Row(
                   children: [
                     Expanded(
@@ -178,16 +238,12 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                           ),
                           padding: EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: Text(
-                          'User',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        child: Text('User', style: TextStyle(fontSize: 16)),
                       ),
                     ),
+
                     SizedBox(width: 12),
+
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () =>
@@ -205,19 +261,15 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                           ),
                           padding: EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: Text(
-                          'Listener',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        child: Text('Listener', style: TextStyle(fontSize: 16)),
                       ),
                     ),
                   ],
                 ),
 
                 SizedBox(height: 30),
+
+                /// SIGNUP BUTTON
                 SizedBox(
                   width: double.infinity,
                   height: 55,
@@ -241,6 +293,8 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
                 ),
 
                 SizedBox(height: 16),
+
+                /// LOGIN REDIRECT
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
