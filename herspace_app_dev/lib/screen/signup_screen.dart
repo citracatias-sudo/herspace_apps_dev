@@ -53,10 +53,8 @@ class _SignUpScreenHerSpaceState extends State<SignUpScreenHerSpace> {
         context,
       ).showSnackBar(SnackBar(content: Text('Account created successfully')));
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => homePageHerspace()),
-      );
+      // navigate to home using named route
+      Navigator.of(context).pushReplacementNamed(homePageHerspace.routeName);
     } else {
       ScaffoldMessenger.of(
         context,

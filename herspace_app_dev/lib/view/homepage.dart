@@ -4,6 +4,9 @@ import 'package:herspace_app_dev/decoration/cost_color.dart';
 class homePageHerspace extends StatefulWidget {
   const homePageHerspace({super.key});
 
+  /// Named route used for navigation
+  static const String routeName = '/home';
+
   @override
   State<homePageHerspace> createState() => _homePageHerspaceState();
 }
