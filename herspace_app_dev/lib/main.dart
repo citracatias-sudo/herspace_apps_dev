@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:herspace_app_dev/screen/splash_screen.dart';
 import 'decoration/cost_color.dart';
 import 'screen/onboarding_screen.dart';
 
@@ -32,7 +33,7 @@ class HerSpaceApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const OnboardingScreenHerspace(),
+      home: SplashScreen(),
     );
   }
 }
