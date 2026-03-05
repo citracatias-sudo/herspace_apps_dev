@@ -15,8 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
+      Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (context) => OnboardingScreen()),
       );
     });
@@ -26,18 +25,28 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: AppColor.softPink),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColor.primary, AppColor.secondary],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.favorite, color: AppColor.primary, size: 70),
+              Icon(
+                Icons.favorite,
+                color: const Color.fromARGB(255, 245, 217, 230),
+                size: 70,
+              ),
 
               SizedBox(height: 20),
 
               Text(
                 "HerSpace",
-                style: TextStyle(fontSize: 28, color: AppColor.textDark),
+                style: TextStyle(fontSize: 28, color: AppColor.surface),
               ),
             ],
           ),

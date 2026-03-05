@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
-  // Main brand color
-  static const Color primary = Color(0xFFEC4899);
+  static const Color primary = Color.fromARGB(255, 240, 121, 174);
+  static const Color secondary = Color.fromARGB(255, 160, 245, 216);
+  static const Color accent = Color.fromARGB(255, 241, 191, 239);
 
-  // Soft pink for light UI
-  static const Color softPink = Color(0xFFFCE7F3);
+  static const Color background = Color(0xFFF6F4F2);
+  static const Color surface = Color(0xFFFFFFFF);
 
-  // Background
-  static const Color background = Color(0xFFF8F8FB);
-
-  // Dark text
-  static const Color textDark = Color(0xFF1F2937);
-
-  // Neutral grey text
-  static const Color textLight = Color(0xFF6B7280);
-
-  // White
-  static const Color white = Colors.white;
+  static const Color textDark = Color(0xFF2E2E2E);
+  static const Color textLight = Color(0xFF7A7A7A);
 }

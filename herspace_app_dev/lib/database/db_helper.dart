@@ -18,13 +18,14 @@ class DatabaseHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
+    print("DATABASE PATH: $path");
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nickname TEXT, 
   email TEXT UNIQUE, password TEXT, role TEXT
 )
 ''');
@@ -34,24 +35,33 @@ CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT,
   Future<int> insertUser(Map<String, dynamic> user) async {
     final db = await instance.database;
 
-    return await db.insert(
-      'users',
-      user,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      final result = await db.insert(
+        'users',
+        user,
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+
+      print("USER INSERTED: $result");
+      return result;
+    } catch (e) {
+      print("INSERT ERROR: $e");
+      return 0;
+    }
   }
 
-  // LOGIN USER
+  // LOGIN USER (checks role too)
   Future<List<Map<String, dynamic>>> loginUser(
     String email,
     String password,
+    String role,
   ) async {
     final db = await instance.database;
 
     final result = await db.query(
       'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
+      where: 'email = ? AND password = ? AND role = ?',
+      whereArgs: [email, password, role],
     );
 
     return result;

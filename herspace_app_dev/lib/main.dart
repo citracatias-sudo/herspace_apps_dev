@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:herspace_app_dev/screen/splash_screen.dart';
 import 'package:herspace_app_dev/screen/login_screen.dart';
 import 'package:herspace_app_dev/screen/signup_screen.dart';
-import 'package:herspace_app_dev/view/homepage.dart';
+import 'package:herspace_app_dev/view/home_screen.dart';
+import 'package:herspace_app_dev/view/home_screen_user.dart';
 
 void main() {
   runApp(const HerSpaceApp());
@@ -34,9 +35,9 @@ class HerSpaceApp extends StatelessWidget {
       home: SplashScreen(),
       routes: {
         // authentication/screens
-        LoginScreenHerSpace.routeName: (c) => const LoginScreenHerSpace(),
+        LoginScreenHerSpace.routeName: (c) => LoginScreenHerSpace(),
         SignUpScreenHerSpace.routeName: (c) => SignUpScreenHerSpace(),
-        homePageHerspace.routeName: (c) => const homePageHerspace(),
+        homePageHerspace.routeName: (c) => HomeScreenUser(),
       },
     );
   }
